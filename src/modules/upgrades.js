@@ -33,6 +33,11 @@ export const upgrades = {
 
         increaseAutoCursor(state) {
             state.autocursor++;
+        },
+
+        startAutoFarm(state) {
+            state.autofarmon = true;
+            state.autocursor = 1;
         }
     },
 
@@ -53,30 +58,41 @@ export const upgrades = {
         },
 
         startAutoFarm({ commit, rootState, state }) {
-            if (rootState.cooki.cookies >= 100) {
-                state.autofarmon = true;
-                state.autocursor = 1;
-                commit('cooki/deduireCookie', 100, { root: true });
-                console.log("this is on right?")
-            } else {
+            if (rootState.cooki.cookies < 100) {
                 window.alert("Nuh uh grind some more.");
+                return false;
             }
+
+            if (state.autofarmon) {
+                window.alert("Passive cookies is already running, silly!");
+                return false;
+            }
+
+            commit('cooki/deduireCookie', 100, { root: true });
+            console.log("Starting soon...")
+            commit('startAutoFarm');
+            console.log("Oh it's on!")
+            console.log("this is on right?")
+            return true;
         },
 
-        autoFarm({ commit, state }) {
-            if (!state.autofarmon) {
-                commit('startAutoFarm');
-                setInterval(() => {
-                    commit('cooki/ajouterCookie', state.autofarms[state.autocursor] * state.upgrades[state.cursor], { root: true });
-                }, 1000);
-            } else {
-                window.alert("Auto farm is already running, silly!");
+        async autoFarm({ dispatch, commit, state }) {
+            const purchase = await dispatch('startAutoFarm');
+        
+            if (!purchase) {
+                window.alert("Uh oh.");
+                return;
             }
+
+            setInterval(() => {
+                commit('cooki/ajouterCookie', state.autofarms[state.autocursor] * state.upgrades[state.cursor], { root: true });
+            }, 1000);
         },
 
         increaseAutoCursor({ commit, rootState, state }) {
             if (state.autocursor >= state.autofarms.length - 1) {
                 window.alert("Max auto farm! x8");
+                return;
             }
 
             if (rootState.cooki.cookies < state.autocosts[state.autocursor]) {
