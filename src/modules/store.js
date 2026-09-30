@@ -2,15 +2,22 @@ import { createStore } from 'vuex';
 
 import { cooki } from './cookies'
 import { upgrades } from './upgrades'
+import { timer } from './timer'
 
-export default createStore({
+const store = createStore({
 
     modules: {
 
         cooki: cooki,
 
-        upgrades: upgrades
+        upgrades: upgrades,
+
+        timer: timer
 
     }
 
 });
+
+store.dispatch('timer/start');
+
+export default store;

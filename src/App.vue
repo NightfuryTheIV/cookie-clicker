@@ -31,6 +31,7 @@ nav {
   font-size: 12px;
   text-align: center;
   margin-top: 2rem;
+  white-space: nowrap;
 }
 
 nav a.router-link-exact-active {

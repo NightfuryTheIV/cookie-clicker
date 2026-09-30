@@ -7,7 +7,7 @@ export const upgrades = {
             upgrades: [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000],
             cost: [10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000, 5000000, 10000000],
             cursor: 0,
-            autofarms: [0.5, 1, 2, 4, 8],
+            autofarms: [0.5, 1, 2, 4, 8, 16],
             autocosts: [100, 1000, 10000, 100000, 1000000],
             autocursor: 0,
             autofarmon: false
@@ -21,13 +21,9 @@ export const upgrades = {
 
         secretBypassCostButton(state) {
             if (state.cursor >= state.upgrades.length - 1) {
-                window.alert("Max upgrade! x1000000 (million)");
+                return;
             } else {
                 state.cursor++;
-
-                console.log('cursor index: ', state.cursor);
-                console.log('upgrades length: ', state.upgrades.length);
-                console.log('upgrade number: ', state.upgrades[state.cursor]);
             }
         }, 
 
@@ -44,7 +40,6 @@ export const upgrades = {
     actions: {
         increaseClick({ commit, rootState, state }) {
             if (state.cursor >= state.upgrades.length - 1) {
-                window.alert("Max upgrade! x1000000 (million)");
                 return;
             }
 
@@ -64,15 +59,11 @@ export const upgrades = {
             }
 
             if (state.autofarmon) {
-                window.alert("Passive cookies is already running, silly!");
                 return false;
-            }
+            } // after the change I just made to the display of the buttons I realized that this check is most likely useless but I'll leave it in for now just in case it's useful again later
 
             commit('cooki/deduireCookie', 100, { root: true });
-            console.log("Starting soon...")
             commit('startAutoFarm');
-            console.log("Oh it's on!")
-            console.log("this is on right?")
             return true;
         },
 
@@ -80,7 +71,6 @@ export const upgrades = {
             const purchase = await dispatch('startAutoFarm');
         
             if (!purchase) {
-                window.alert("Uh oh.");
                 return;
             }
 
@@ -91,7 +81,6 @@ export const upgrades = {
 
         increaseAutoCursor({ commit, rootState, state }) {
             if (state.autocursor >= state.autofarms.length - 1) {
-                window.alert("Max auto farm! x8");
                 return;
             }
 
@@ -101,10 +90,6 @@ export const upgrades = {
             }
             commit('cooki/deduireCookie', state.autocosts[state.autocursor], { root: true });
             commit('increaseAutoCursor');
-
-            console.log('autocursor index: ', state.autocursor);
-            console.log('autofarms length: ', state.autofarms.length);
-            console.log('autofarm number: ', state.autofarms[state.autocursor]);
         }
     },
 

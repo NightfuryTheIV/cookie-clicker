@@ -3,9 +3,10 @@
         <div class="containers">
             <div id="stats">
                 <p>Current click multiplier: x{{ $store.getters['upgrades/currentUpgrade'] }}</p>
-                <p>The next upgrade will cost {{ $store.getters['upgrades/nextUpgradeCost'] }}</p>
+                <p v-if="$store.getters['upgrades/currentUpgrade'] != 1000000">The next upgrade will cost {{ $store.getters['upgrades/nextUpgradeCost'] }}</p>
                 <p>Current auto multiplier: x{{ $store.getters['upgrades/currentAutoUpgrade'] }}</p>
-                <p>Next auto multiplier cost: {{ $store.getters['upgrades/nextAutoUpgradeCost'] }}</p>
+                <p v-if="$store.getters['upgrades/currentAutoUpgrade'] != 16">Next auto multiplier cost: {{ $store.getters['upgrades/nextAutoUpgradeCost'] }}</p>
+                <p>Time since start: {{ $store.getters['timer/formatted'] }}</p>
             </div>
         </div>
 
@@ -15,13 +16,13 @@
             <div id="buttons">
                 <button class="btn" @click="$store.commit('cooki/ajouterCookie', $store.getters['upgrades/currentUpgrade'])">Click!</button>
 
-                <button class="btn" @click="$store.dispatch('upgrades/increaseClick')">Buy upgrade</button>
+                <button v-if="$store.getters['upgrades/currentUpgrade'] != 1000000" class="btn" @click="$store.dispatch('upgrades/increaseClick')">Buy Multiplier Upgrade</button>
+                
+                <button v-if="$store.getters['upgrades/currentAutoUpgrade'] == 0.5" class="btn" @click="$store.dispatch('upgrades/autoFarm')">Purchase Auto Production</button>
+                
+                <button v-if="($store.getters['upgrades/currentAutoUpgrade'] != 16) && ($store.getters['upgrades/currentAutoUpgrade'] != 0.5)" class="btn" @click="$store.dispatch('upgrades/increaseAutoCursor')">Buy Auto Multiplier Upgrade</button>
 
-                <button class="btn" @click="$store.commit('upgrades/secretBypassCostButton')">Cheat button</button>
-                
-                <button class="btn" @click="$store.dispatch('upgrades/autoFarm')">Purchase Auto Farm</button>
-                
-                <button class="btn" @click="$store.dispatch('upgrades/increaseAutoCursor')">increase auto test</button>
+                <button v-if="$store.getters['upgrades/currentUpgrade'] != 1000000" id="cheat" @click="$store.commit('upgrades/secretBypassCostButton')">DO NOT CLICK!!!! (cheat button)</button>
             </div>
         </div>
     </div>
@@ -35,30 +36,18 @@
 
 </template>
 
-<style>
+<style scoped>
     h2 {
         color: chocolate;
         font-size: 72px;
     }
 
     p {
-        font-size: 24px;
+        font-size: 20px;
     }
 
     #style {
         color: rgb(248, 246, 246);
-    }
-
-    div {
-        margin: 10em 0 0 0;
-    }
-
-    #buttons {
-        display: flex;
-        flex-direction: column;
-        flex-wrap: wrap;
-        height: auto;
-        justify-content: space-between;
     }
 
     .btn {
@@ -67,11 +56,17 @@
         border-color: blue;
         border-width: 2px;
         border-style: solid;
+        width: 100%;
     }
 
     #stats {
         min-width: auto;
         text-align: center;
+        margin-right: 72px;
+    }
+
+    #stats p {
+        white-space: nowrap;
     }
 
     #pagediv {
@@ -79,21 +74,30 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        width: 1000px;
-        border: pink 2px solid;
+        min-width: 1000px;
+        height: 600px;
     }
 
     .containers {
-        height: 100%;
         display: block;
-        border: green 2px solid;
         text-align: center;
-        justify-content: space-between;
-        flex-direction: column;
+        flex-shrink: 0;
     }
 
     h2, #stats, #buttons {
-        vertical-align: middle;
-        border: 2px purple solid;
+        margin: 0;
+    }
+
+    #buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    #cheat {
+        font-weight: bolder;
+        font-size: 36px;
+        color: red;
+        background-color: black;
     }
 </style>
