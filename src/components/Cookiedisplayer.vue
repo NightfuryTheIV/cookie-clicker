@@ -99,5 +99,6 @@
         font-size: 36px;
         color: red;
         background-color: black;
+        opacity: 0.05; /* this is almost transparent just for fun */
     }
 </style>
